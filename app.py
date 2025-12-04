@@ -2,12 +2,14 @@ from flask import Flask, render_template, request, jsonify
 import razorpay
 import hmac
 import hashlib
+import os
 
 app = Flask(__name__)
 
-# Razorpay credentials
-RAZORPAY_KEY_ID = "rzp_test_RnZnoyAGhj8L4J"
-RAZORPAY_KEY_SECRET = "r4uEU9E8MOxk09t9g6q4jn9F"
+
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
+# Razorpay credentials above
 
 client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
