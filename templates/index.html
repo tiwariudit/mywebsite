@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UPI Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h2>UPI Payment Demo</h2>
+
+    <input id="amount" type="number" placeholder="Enter amount" />
+    <button onclick="startPayment()">Pay Now</button>
+
+    <script>
+        async function startPayment() {
+            const amount = document.getElementById("amount").value;
+
+            const order = await fetch("/create_order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount: amount })
+            }).then(res => res.json());
+
+            const options = {
+                key: "{{ key_id }}",
+                amount: order.amount,
+                currency: "INR",
+                name: "My Website",
+                description: "UPI Payment",
+                order_id: order.id,
+                handler: async function (response) {
+                    const verifyResponse = await fetch("/verify", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(response)
+                    }).then(res => res.json());
+
+                    alert(verifyResponse.message);
+                },
+                theme: { color: "#3399cc" },
+                method: { upi: true }
+            };
+
+            const pay = new Razorpay(options);
+            pay.open();
+        }
+    </script>
+</body>
+</html>
